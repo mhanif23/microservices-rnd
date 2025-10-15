@@ -1,0 +1,78 @@
+openapi: 3.0.3
+info:
+  title: borrow-svc API
+  version: 1.0.0
+paths:
+  /health:
+    get: { responses: { '200': { description: ok } } }
+  /borrows:
+    get:
+      parameters:
+        - in: query
+          name: userId
+          schema: { type: string, format: uuid }
+        - in: query
+          name: status
+          schema: { type: string, enum: [BORROWED, RETURNED, LATE] }
+      responses:
+        '200':
+          description: ok
+          content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Borrow' } } } }
+    post:
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id, book_id]
+              properties:
+                user_id: { type: string, format: uuid }
+                book_id: { type: string, format: uuid }
+      responses:
+        '201': { description: created, content: { application/json: { schema: { $ref: '#/components/schemas/Borrow' } } } }
+        '400': { $ref: '#/components/responses/BadRequest' }
+  /borrows/{id}/return:
+    post:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: ok, content: { application/json: { schema: { $ref: '#/components/schemas/Borrow' } } } }
+        '404': { $ref: '#/components/responses/NotFound' }
+components:
+  schemas:
+    Borrow:
+      type: object
+      required: [id, user_id, book_id, borrowed_at, due_at, status]
+      properties:
+        id: { type: string, format: uuid }
+        user_id: { type: string, format: uuid }
+        book_id: { type: string, format: uuid }
+        borrowed_at: { type: string, format: date-time }
+        due_at: { type: string, format: date-time }
+        returned_at: { type: string, format: date-time, nullable: true }
+        status: { type: string, enum: [BORROWED, RETURNED, LATE] }
+        fine_amount: { type: string }
+  responses:
+    BadRequest:
+      description: bad request
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+    NotFound:
+      description: not found
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+  schemas:
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: string }
+        message: { type: string }
+        details: { type: object }

@@ -1,0 +1,12 @@
+FROM eclipse-temurin:21-jdk AS build
+WORKDIR /app
+COPY pom.xml .
+RUN mvn -q -e -B -ntp -DskipTests dependency:go-offline
+COPY src ./src
+RUN mvn -q -e -B -ntp -DskipTests package
+
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+COPY --from=build /app/target/*.jar /app/app.jar
+EXPOSE 3002
+ENTRYPOINT ["java","-jar","/app/app.jar"]

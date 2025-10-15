@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: library-api
+  namespace: lib-dev
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: api.library.local
+    http:
+      paths:
+      - path: /user
+        pathType: Prefix
+        backend: { service: { name: user-svc, port: { number: 80 } } }
+      - path: /book
+        pathType: Prefix
+        backend: { service: { name: book-svc, port: { number: 80 } } }
+      - path: /borrow
+        pathType: Prefix
+        backend: { service: { name: borrow-svc, port: { number: 80 } } }

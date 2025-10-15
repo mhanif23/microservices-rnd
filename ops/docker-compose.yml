@@ -1,0 +1,52 @@
+version: "3.9"
+services:
+  mongo:
+    image: mongo:6
+    ports: ["27018:27017"]
+    volumes: [ "mongo_data:/data/db" ]
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: library
+      POSTGRES_PASSWORD: library
+      POSTGRES_DB: librarydb
+    ports: ["5433:5432"]
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ../migrations:/docker-entrypoint-initdb.d:ro
+
+  adminer:
+    image: adminer:4
+    ports: ["8080:8080"]
+    depends_on: [postgres]
+
+  user-svc:
+    build: ../services/user-svc-go
+    environment:
+      PORT: "3000"
+      DATABASE_URL: "postgres://library:library@postgres:5432/librarydb?sslmode=disable"
+    ports: ["3000:3000"]
+    depends_on: [postgres]
+
+  book-svc:
+    build: ../services/book-svc-ts
+    environment:
+      PORT: "3001"
+      MONGO_URI: "mongodb://mongo:27017/books"
+    ports: ["3001:3001"]
+    depends_on: [mongo]
+
+  borrow-svc:
+    build: ../services/borrow-svc-spring
+    environment:
+      SERVER_PORT: "3002"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/librarydb"
+      SPRING_DATASOURCE_USERNAME: "library"
+      SPRING_DATASOURCE_PASSWORD: "library"
+    ports: ["3002:3002"]
+    depends_on: [postgres]
+
+volumes:
+  mongo_data:
+  pg_data:
