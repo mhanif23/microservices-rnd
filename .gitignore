@@ -1,0 +1,102 @@
+# -----------------------------
+# OS / Editor
+# -----------------------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+*.orig
+*.bak
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# -----------------------------
+# Node / TypeScript (book-svc)
+# -----------------------------
+node_modules/
+dist/
+build/
+coverage/
+.nyc_output/
+.eslintcache
+*.tsbuildinfo
+
+# -----------------------------
+# Go (user-svc)
+# -----------------------------
+# Binaries hasil build
+**/*.exe
+**/*.dll
+**/*.so
+**/*.dylib
+**/*.test
+# Output lokal umum
+bin/
+out/
+# Catatan: kalau suatu saat pakai `vendor/`, umumnya DI-COMMIT untuk reproducibility.
+
+# -----------------------------
+# Java / Maven (borrow-svc)
+# -----------------------------
+target/
+# Eclipse/STS
+.project
+.classpath
+.settings/
+# IntelliJ sudah dicakup di atas
+
+# -----------------------------
+# Docker / Compose
+# -----------------------------
+# Env lokal—jangan masuk repo
+.env
+.env.*
+!.env.example
+!.env.*.example
+# Override compose lokal
+docker-compose.override.yml
+# Log compose
+docker-compose*.log
+
+# -----------------------------
+# Kubernetes / Helm / Skaffold
+# -----------------------------
+# File kredensial / override lokal
+*.secret.yaml
+*.secret.yml
+*secret*.yaml
+*secret*.yml
+*.local.yaml
+*.local.yml
+# Output/generates ops tool
+skaffold.log
+.skaffold/
+deploy/**/.generated/
+deploy/**/tmpcharts/
+deploy/**/charts/*/charts/
+deploy/**/charts/*/tmp/
+# kubeconfig lokal (kalau tersimpan di repo)
+kubeconfig*
+.kube/
+
+# -----------------------------
+# Logs & runtime artifacts
+# -----------------------------
+logs/
+*.log
+*.pid
+*.seed
+*.coverage
+junit.xml
+
+# -----------------------------
+# Misc
+# -----------------------------
+# Mac zips, etc.
+*.zip~

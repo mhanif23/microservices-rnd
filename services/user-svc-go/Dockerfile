@@ -1,8 +1,12 @@
-FROM golang:1.22-alpine AS build
+FROM golang:1.23-alpine AS build
 WORKDIR /src
+
+RUN apk add --no-cache git ca-certificates
+
 COPY go.mod ./
-RUN go mod download
 COPY . .
+RUN go mod tidy
+
 RUN go build -o /out/user
 
 FROM alpine:3.20
