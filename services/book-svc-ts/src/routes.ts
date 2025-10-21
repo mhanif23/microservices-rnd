@@ -45,7 +45,6 @@ export class BookController {
 
   @Post('/books')
   async create(@Body() body: any) {
-    // Expect body contains _id (UUID string)
     if (!body._id || !body.title) return { code: 'BAD_REQUEST', message: 'missing _id or title' };
     const created = await Book.create(body);
     return created;
